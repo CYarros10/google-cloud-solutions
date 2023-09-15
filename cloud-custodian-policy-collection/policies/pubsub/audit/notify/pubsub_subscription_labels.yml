@@ -1,0 +1,29 @@
+policies:
+  - name: audit-notify-pubsub-topic-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.pubsub-subscription
+    mode:
+      type: gcp-audit
+      methods:
+        - "google.pubsub.v1.Subscriber.CreateSubscription"
+        - "google.pubsub.v1.Subscriber.UpdateSubscription"
+      labels:
+        application: cloud-custodian
+        custodian-type: audit
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic

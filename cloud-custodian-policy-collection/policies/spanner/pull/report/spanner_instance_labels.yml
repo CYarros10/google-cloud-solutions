@@ -1,0 +1,20 @@
+policies:
+  - name: pull-report-spanner-instance-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.spanner-instance
+    mode:
+      type: gcp-periodic
+      schedule: "every 24 hours"
+      target-type: pubsub
+      labels:
+        application: cloud-custodian
+        custodian-type: periodic
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent

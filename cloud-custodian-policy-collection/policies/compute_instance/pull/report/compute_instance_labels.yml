@@ -1,0 +1,13 @@
+policies:
+  - name: audit-notify-compute-instance-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.instance
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent

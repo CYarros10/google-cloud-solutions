@@ -1,0 +1,13 @@
+policies:
+  - name: pull-report-dataflow-job-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.dataflow-job
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent

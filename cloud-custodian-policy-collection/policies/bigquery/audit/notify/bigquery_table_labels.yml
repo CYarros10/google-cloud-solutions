@@ -1,0 +1,30 @@
+policies:
+  - name: audit-notify-bq-table-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.bq-table
+    mode:
+      type: gcp-audit
+      methods:
+        - "google.cloud.bigquery.v2.JobService.InsertTable"
+        - "google.cloud.bigquery.v2.JobService.UpdateTable"
+        - "google.cloud.bigquery.v2.JobService.PatchTable"
+      labels:
+        application: cloud-custodian
+        custodian-type: audit
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic

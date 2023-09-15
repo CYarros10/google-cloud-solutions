@@ -1,0 +1,14 @@
+policies:
+  - name: pull-report-persistent-disk-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.disk
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+

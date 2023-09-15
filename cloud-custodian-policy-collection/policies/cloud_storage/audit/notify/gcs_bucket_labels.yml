@@ -1,0 +1,29 @@
+policies:
+  - name: audit-notify-gcs-bucket-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.bucket
+    mode:
+      type: gcp-audit
+      methods:
+        - "storage.buckets.create"
+        - "storage.buckets.update"
+      labels:
+        application: cloud-custodian
+        custodian-type: audit
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic

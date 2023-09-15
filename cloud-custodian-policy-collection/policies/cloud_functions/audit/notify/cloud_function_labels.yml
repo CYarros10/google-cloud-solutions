@@ -1,0 +1,31 @@
+policies:
+  - name: audit-notify-cloud-function-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.function
+    mode:
+      type: gcp-audit
+      methods:
+        - "google.cloud.functions.v1.CreateFunctionRequest"
+        - "google.cloud.functions.v1.UpdateFunctionRequest"
+        - "google.cloud.functions.v2.CreateFunctionRequest"
+        - "google.cloud.functions.v2.UpdateFunctionRequest"
+      labels:
+        application: cloud-custodian
+        custodian-type: audit
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic

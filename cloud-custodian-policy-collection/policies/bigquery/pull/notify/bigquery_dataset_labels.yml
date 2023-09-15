@@ -1,0 +1,21 @@
+policies:
+  - name: pull-notify-bq-dataset-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.bq-dataset
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic

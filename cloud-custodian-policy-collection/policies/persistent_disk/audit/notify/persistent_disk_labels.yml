@@ -1,0 +1,28 @@
+policies:
+  - name: audit-notify-persistent-disk-missing-labels
+    description: >
+      Check label is present
+    resource: gcp.disk
+    mode:
+      type: gcp-audit
+      methods:
+        - "v1.compute.disks.insert"
+      labels:
+        application: cloud-custodian
+        custodian-type: audit
+    filters:
+      - or:
+        - type: value
+          key: "labels.costcenter"
+          value: absent
+        - type: value
+          key: "labels.application"
+          value: absent
+    actions:
+     - type: notify
+       to:
+         - email@address
+       format: txt
+       transport:
+         type: pubsub
+         topic: projects/my-gcp-project/topics/my-topic
